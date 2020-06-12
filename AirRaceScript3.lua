@@ -539,8 +539,15 @@ function Airrace:UpdatePlayerStatus(player)
 			elseif not player.Finished then
 				-- Player has missed a gate or is going the wrong way
 				if gateNumber > player.CurrentGateNumber + 1 then
-					-- Player has missed a gate
-					player.StatusText = string.format("Missed gate %d", player.CurrentGateNumber + 1)
+					-- Player has missed one or more gates
+					missedGates = gateNumber - (player.CurrentGateNumber + 1)
+					if missedGates == 1 then
+						player.StatusText = string.format("Missed gate %d", player.CurrentGateNumber + 1)
+					else
+						player.StatusText = string.format("Missed gates %d to %d", player.CurrentGateNumber + 1, gateNumber - 1)
+					end
+					player.Penalty = player.Penalty + (5 * missedGates)
+					player.CurrentGateNumber = gateNumber
 				else
 					-- Player is going the wrong way
 					-- player.StatusText = string.format("Wrong way! Last known gate: %d", player.CurrentGateNumber)
