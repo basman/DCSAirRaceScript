@@ -12,8 +12,8 @@
 -- started, and will run until he either finishes the course, or leaves the route.                                  --
 --                                                                                                                  --
 -- Usage of this script:                                                                                            --
--- * Create a mission with one or more large overlapping trigger zones, named "RaceZone #001", "RaceZone #002", etc --
--- * Create two or more small trigger zones inside the large ones, named "Gate #001", "Gate #002", etc              --
+-- * Create a mission with one or more large overlapping trigger zones, named "racezone #001", "racezone #002", etc --
+-- * Create two or more small trigger zones inside the large ones, named "gate #001", "gate #002", etc              --
 -- * Place some static objects inside the Gate trigger zones so the players can see the gates                       --
 --   These objects can be of any type, and can have any name, they are just there for visual reference.             --
 -- * Add one or more aircraft or helicopters so clients can race with them                                          --
@@ -174,15 +174,15 @@ end
 -----------------------------------------------------------------------------------------
 -- Adds a gate to the course.
 -- Parameter gateNumber: the number of the trigger zone that defines a gate.
---                       e.g. for "Gate #012" this is 12
+--                       e.g. for "gate #012" this is 12
 --
 function Course:AddGate(gateNumber)
-	local gateName = string.format("Gate #%03d", gateNumber)
+	local gateName = string.format("gate #%03d", gateNumber)
 	local triggerZone = trigger.misc.getZone(gateName)
 	-- logMessage(string.format("Looking up gate %s", gateName))
 	if triggerZone then
 		table.insert(self.Gates, gateName)
-		-- logMessage(string.format("Gate %s added to course", gateName))
+		-- logMessage(string.format("gate %s added to course", gateName))
 	else
 		logMessage(string.format("Could not find trigger zone '%s'", gateName))
 	end
@@ -672,11 +672,11 @@ function Init()
 	if numberRaceZones > 0 and numberGates > 0 then
 		for idx = 1, numberRaceZones do
 			-- logMessage(string.format("Adding zone: RaceZone #%03d", idx))
-			table.insert(raceZones, string.format("RaceZone #%03d", idx))
+			table.insert(raceZones, string.format("racezone #%03d", idx))
 		end
 		for idx = 1, numberPylons do
 			-- logMessage(string.format("Adding zone: Pylons #%03d", idx))
-			table.insert(racePylons, string.format("Pilone #%03d", idx))
+			table.insert(racePylons, string.format("pilone #%03d", idx))
 		end
 		for idx = 1, numberGates do
 			course:AddGate(idx)
