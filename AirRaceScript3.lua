@@ -25,6 +25,7 @@
 --                                         NewPlayerCheckInterval = <number of seconds between checks>    [optional]--
 --                                         RemovePlayerCheckInterval = <number of seconds between checks> [optional]--
 --                                         GateHeight = <global height of the gates in meters>            [optional]--
+--                                         StartSpeedLimit = <first gate speed limit in km/h>             [optional]--
 --                                                                                                                  --
 --   2. Once          --> Time more(1) --> Do Script File                                                           --
 --                                         Mistv3_2.lua                                                             --
@@ -214,6 +215,7 @@ Airrace = {
 	LastMessage = '',
 	LastMessageId = 0,
 	GateHeight = 100,
+	StartSpeedLimit = 300,
 	MessageLogged = false
 }
 
@@ -223,7 +225,7 @@ Airrace = {
 --                             covering the entire race course
 -- Parameter course          : A reference to the Course object containing all the gates
 --
-function Airrace:New(triggerZoneNames, triggerZonePylonNames, course, gateHeight)
+function Airrace:New(triggerZoneNames, triggerZonePylonNames, course, gateHeight, startSpeedLimit)
 	local obj = {
 		RaceZones = triggerZoneNames,
 		PylonZones = triggerZonePylonNames,
@@ -232,7 +234,8 @@ function Airrace:New(triggerZoneNames, triggerZonePylonNames, course, gateHeight
 		FastestTime = 0,
 		FastestPlayer = '',
 		FastestIntermediates = {},
-		GateHeight = gateHeight
+		GateHeight = gateHeight,
+		StartSpeedLimit = startSpeedLimit
 	}
 	setmetatable(obj, { __index = Airrace })
 	return obj
@@ -419,12 +422,12 @@ function Airrace:CheckGateSpeedForPlayer(player)
 	local unitspeed = Unit.getByName(player.UnitName):getVelocity()
 	speed = math.sqrt(unitspeed.x^2 + unitspeed.y^2 + unitspeed.z^2)
 	-- logMessage(string.format("sped %d km/h", speed * 3.6))
-	if speed * 3.6 <= 300 then
+	if speed * 3.6 <= self.StartSpeedLimit then
 		result = true
 		logMessage(string.format("Player start speed = %d km/h", speed * 3.6))
 	else
 		result = false
-		logMessage(string.format("EXCEEDING START SPEED LIMIT !!! Player speed = %s km/h", speed * 3.6))
+		logMessage(string.format("EXCEEDING START SPEED LIMIT of %d km/h !!! Player speed = %s km/h", self.StartSpeedLimit, speed * 3.6))
 	end
 	return result
 end
@@ -668,6 +671,7 @@ function Init()
 	local newPlayerCheckInterval = NewPlayerCheckInterval or 1
 	local removePlayerCheckInterval = RemovePlayerCheckInterval or 30
 	local gateHeight = GateHeight or 25
+	local startSpeedLimit = StartSpeedLimit or 300
 	
 	if numberRaceZones > 0 and numberGates > 0 then
 		for idx = 1, numberRaceZones do
@@ -681,7 +685,7 @@ function Init()
 		for idx = 1, numberGates do
 			course:AddGate(idx)
 		end
-		race = Airrace:New(raceZones, racePylons, course, gateHeight)
+		race = Airrace:New(raceZones, racePylons, course, gateHeight, startSpeedLimit)
 		mist.scheduleFunction(RaceTimer, { race }, timer.getTime(), 0.1)
 		mist.scheduleFunction(NewPlayerTimer, { race }, timer.getTime(), newPlayerCheckInterval)
 		mist.scheduleFunction(RemovePlayerTimer, { race }, timer.getTime(), removePlayerCheckInterval)
