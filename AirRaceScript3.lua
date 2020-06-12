@@ -488,6 +488,7 @@ function Airrace:UpdatePlayerStatus(player)
 				player.PylonFlag = false
 				player:StopTimer()
 				player.StatusText = string.format("Finished. Race time:  %s. Penalty: %s second. Total time: %s ", formatTime(player.TotalTime), player.Penalty, formatTime(player.TotalTime + player.Penalty))
+				env.info(string.format("Player %s finished the course. Race time: %s. Penalty: %s. Total time: %s", player.Name, formatTime(player.TotalTime), player.Penalty, formatTime(player.TotalTime + player.Penalty)))
 				trigger.action.outSound('pik.ogg')
 				player.CurrentGateNumber = gateNumber
 				if self.FastestTime == 0 or self.FastestTime > player.TotalTime + player.Penalty then
@@ -536,6 +537,7 @@ function Airrace:UpdatePlayerStatus(player)
 			if player.CurrentGateNumber == 0 and not player.Finished then
 				-- Player is entering the course half-way
 				player.StatusText = "Wrong start gate, go to gate 1 to start"
+				env.info(string.format("Player %s entered the course half-way", player.Name))
 			elseif not player.Finished then
 				-- Player has missed a gate or is going the wrong way
 				if gateNumber > player.CurrentGateNumber + 1 then
@@ -543,8 +545,10 @@ function Airrace:UpdatePlayerStatus(player)
 					missedGates = gateNumber - (player.CurrentGateNumber + 1)
 					if missedGates == 1 then
 						player.StatusText = string.format("Missed gate %d", player.CurrentGateNumber + 1)
+						env.info(string.format("Player %s missed gate %d", player.Name, player.CurrentGateNumber + 1))
 					else
 						player.StatusText = string.format("Missed gates %d to %d", player.CurrentGateNumber + 1, gateNumber - 1)
+						env.info(string.format("Player %s missed gates %d to %d", player.Name, player.CurrentGateNumber + 1, gateNumber - 1))
 					end
 					player.Penalty = player.Penalty + (5 * missedGates)
 					player.CurrentGateNumber = gateNumber
