@@ -1,8 +1,8 @@
 ----------------------------------------------------------------------------------------------------------------------
 -- Script       : CrossCountryRace.lua - Multiplayer Cross-country airrace script                                   --
 -- Version      : 1.1                                                                                               --
--- Requirements : - DCS World 1.2.7                                                                                 --
---                - Mist 3.2                                                                                        --
+-- Requirements : - DCS World 2.5.6                                                                                 --
+--                - Mist 4.4.83                                                                                        --
 -- Author       : Bas 'Joe Kurr' Weijers                                                                            --
 --                Dutch Flanker Display Team                                                                        --
 ----------------------------------------------------------------------------------------------------------------------
@@ -29,31 +29,11 @@
 --                                         StartSpeedLimit = <first gate speed limit in km/h>             [optional]--
 --                                                                                                                  --
 --   2. Once          --> Time more(1) --> Do Script File                                                           --
---                                         Mistv3_2.lua                                                             --
+--                                         mist_4_4_83.lua                                                          --
 --                                                                                                                  --
 --   3. Once          --> Time more(2) --> Do Script File                                                           --
---                                         Race.lua                                                                 --
+--                                         AirRaceScript3.lua                                                       --
 --                                                                                                                  --
-----------------------------------------------------------------------------------------------------------------------
--- Version history:                                                                                                 --
--- 1.0 - 02-02-2014 | Initial version                                                                               --
--- 1.1 - 04-02-2014 | Bugs fixed:                                                                                   --
---                  | * Message 'Wrong start gate' shown when player finished                                       --
---                  | * Message 'Wrong start gate' not shown when player missed gate 1                              --
---                  | * Crashed players not removed from list after set interval                                    --
---                  | Other changes:                                                                                --
---                  | * Removed obsolete Gate class                                                                 --
---                  | * Added optional settings NewPlayerCheckInterval and RemovePlayerCheckInterval                --
---                  | * Added fastest time recording                                                                --
---                  | * Added split times                                                                           --
--- 1.2 - 19-09-2016 | Bugs fixed:                                                                                   --
---                  | * Changed the way messages are shown                                                          --
---                  | Other changes:                                                                                --
---                  | * Only players in the race track will see messages                                            --
--- 1.3 - 23-09-2016 | Bugs fixed:                                                                                   --
---                  | * Player list showed multiple times, clogging up the right side of the screen                 --
--- 1.4 - 28-09-2016 | Bugs Fixed:                                                                                   --
---                  | * Script caused extremely low frame rate                                                      --
 ----------------------------------------------------------------------------------------------------------------------
 
 ----------------------------------------------------------------------------------------------------------------------
