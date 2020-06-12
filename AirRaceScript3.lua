@@ -686,7 +686,7 @@ function Init()
 		mist.scheduleFunction(NewPlayerTimer, { race }, timer.getTime(), newPlayerCheckInterval)
 		mist.scheduleFunction(RemovePlayerTimer, { race }, timer.getTime(), removePlayerCheckInterval)
 	else
-		logMessage("Variables 'NumberRaceZones' and 'NumberGates' not set")
+		logMessage("Variables 'NumberRaceZones' or 'NumberGates' not set")
 	end
 end
 
