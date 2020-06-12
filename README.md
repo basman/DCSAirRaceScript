@@ -17,3 +17,5 @@ All you need to do is:
    Name them "racetrack #001", "racetrack #002", ...
 5. Create three script triggers to initialize and run this script. See the comment
    block at the start of the script.
+6. Add a dummy trigger that plays all sound files. This makes sure, they are added to the
+   mission file.
