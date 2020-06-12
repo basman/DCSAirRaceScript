@@ -92,6 +92,7 @@ function Player:New(playerUnit)
 		StatusText = 'New entry'
 	}
 	setmetatable(obj, { __index = Player })
+
 	return obj
 end
 
@@ -251,6 +252,7 @@ function Airrace:CheckForNewPlayers()
 				end
 			end
 			if not playerExists then
+				env.info(string.format("Player %s added to player list", unit:getPlayerName() or unit:getName()))
 				table.insert(self.Players, Player:New(unit))
 				trigger.action.outSound('smoke on.ogg')
 			end
@@ -285,6 +287,7 @@ function Airrace:RemoveExitedPlayers()
 				end
 			end
 			if not playerExists then
+				env.info(string.format("Player %s removed from player list", player.Name))
 				table.remove(self.Players, playerIndex)
 			end
 		end
