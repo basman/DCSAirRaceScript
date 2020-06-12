@@ -174,7 +174,7 @@ end
 -- Return all units currently flying through a gate on the course
 --
 function Course:GetUnitsInGates()
-	local allUnits = mist.makeUnitTable( { '[all][plane][helicopter]' } )
+	local allUnits = mist.makeUnitTable( { '[blue][plane]' } )
 	local units = mist.getUnitsInZones(allUnits, self.Gates)
 	return units
 end
@@ -229,7 +229,7 @@ end
 -- and add them to the list of active players
 --
 function Airrace:CheckForNewPlayers()
-	local allUnits = mist.makeUnitTable( { '[all][plane][helicopter]' } )
+	local allUnits = mist.makeUnitTable( { '[blue][plane]' } )
 	local unitsInZone = mist.getUnitsInZones(allUnits, self.RaceZones)
 	local playerExists = false
 
@@ -264,7 +264,7 @@ end
 --
 function Airrace:RemoveExitedPlayers()
 	if #self.Players > 0 then
-		local allUnits = mist.makeUnitTable( { '[all][plane][helicopter]' } )
+		local allUnits = mist.makeUnitTable( { '[blue][plane]' } )
 		local unitsInZone = mist.getUnitsInZones(allUnits, self.RaceZones)
 		local playerExists = false
 
