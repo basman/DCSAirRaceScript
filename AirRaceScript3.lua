@@ -24,6 +24,7 @@
 --                                         NumberGates = <total number of Gate triggerzones>                        --
 --                                         NewPlayerCheckInterval = <number of seconds between checks>    [optional]--
 --                                         RemovePlayerCheckInterval = <number of seconds between checks> [optional]--
+--                                         HorizontalGates = <list of gate numbers requiring level flight>[optional]--
 --                                         GateHeight = <global height of the gates in meters>            [optional]--
 --                                         StartSpeedLimit = <first gate speed limit in km/h>             [optional]--
 --                                                                                                                  --
@@ -215,6 +216,7 @@ Airrace = {
 	LastMessage = '',
 	LastMessageId = 0,
 	GateHeight = 100,
+	HorizontalGates = {},
 	StartSpeedLimit = 300,
 	MessageLogged = false
 }
@@ -225,7 +227,7 @@ Airrace = {
 --                             covering the entire race course
 -- Parameter course          : A reference to the Course object containing all the gates
 --
-function Airrace:New(triggerZoneNames, triggerZonePylonNames, course, gateHeight, startSpeedLimit)
+function Airrace:New(triggerZoneNames, triggerZonePylonNames, course, gateHeight, horizontalGates, startSpeedLimit)
 	local obj = {
 		RaceZones = triggerZoneNames,
 		PylonZones = triggerZonePylonNames,
@@ -235,6 +237,7 @@ function Airrace:New(triggerZoneNames, triggerZonePylonNames, course, gateHeight
 		FastestPlayer = '',
 		FastestIntermediates = {},
 		GateHeight = gateHeight,
+		HorizontalGates = horizontalGates or {},
 		StartSpeedLimit = startSpeedLimit
 	}
 	setmetatable(obj, { __index = Airrace })
@@ -518,8 +521,8 @@ function Airrace:UpdatePlayerStatus(player)
 				local intermediate = player:GetIntermediateTime()
 				trigger.action.outSound('pik.ogg')
 				player.StatusText = string.format("Intermediate: %s", formatTime(intermediate))
-				for i = 1 , #horizontalGates do
-					if horizontalGates[i] == gateNumber then
+				for i = 1 , #self.HorizontalGates do
+					if self.HorizontalGates[i] == gateNumber then
 						local gateRollOk = self:CheckGateRollForPlayer(player)
 						if gateRollOk == false then
 							trigger.action.outSound('penalty.ogg')
@@ -662,7 +665,7 @@ end
 function Init()
 	local raceZones = {}
 	local racePylons = {}
-	local horizontalGates = horizontalGates
+	local horizontalGates = HorizontalGates
 	local course = Course:New()
 	local race = nil
 	local numberRaceZones = NumberRaceZones or 0
@@ -685,7 +688,7 @@ function Init()
 		for idx = 1, numberGates do
 			course:AddGate(idx)
 		end
-		race = Airrace:New(raceZones, racePylons, course, gateHeight, startSpeedLimit)
+		race = Airrace:New(raceZones, racePylons, course, gateHeight, horizontalGates, startSpeedLimit)
 		mist.scheduleFunction(RaceTimer, { race }, timer.getTime(), 0.1)
 		mist.scheduleFunction(NewPlayerTimer, { race }, timer.getTime(), newPlayerCheckInterval)
 		mist.scheduleFunction(RemovePlayerTimer, { race }, timer.getTime(), removePlayerCheckInterval)
