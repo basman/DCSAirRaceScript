@@ -576,17 +576,17 @@ function Airrace:ListPlayers()
 			end
 		end
 	end
---	if self.LastMessage ~= text then
-		local msg = {} 
-		msg.text = text 
-		msg.displayTime = 25  
-		msg.msgFor = {units = playerNames} 
---		msg.msgFor = {coa = {'all'}} 
-		mist.message.removeById(self.LastMessageId)
-		self.LastMessageId = mist.message.add(msg)
-		self.LastMessage = text
---	end
---  trigger.action.outText(text, 10)
+-- --	if self.LastMessage ~= text then
+-- 		local msg = {} 
+-- 		msg.text = text 
+-- 		msg.displayTime = 25  
+-- 		msg.msgFor = {units = playerNames} 
+-- --		msg.msgFor = {coa = {'all'}} 
+-- 		mist.message.removeById(self.LastMessageId)
+-- 		self.LastMessageId = mist.message.add(msg)
+-- 		self.LastMessage = text
+-- --	end
+	trigger.action.outText(text, 10, true)
 end
 
 ----------------------------------------------------------------------------------------------------------------------
