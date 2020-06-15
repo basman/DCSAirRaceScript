@@ -348,10 +348,12 @@ function Airrace:CheckPylonHitForPlayer(player)
 				player.Penalty = player.Penalty + 3
 				player.HitPylon = player.HitPylon + 1
 				player.PylonFlag = true
+				env.info(string.format("Player %s hit a pylon (%d)", player.Name, player.HitPylon))
 			end
 			if player.HitPylon == 3 then
 				player.DNF = true
 				player.StatusText = string.format("3rd pylon hit !!! DNF!!!")
+				env.info(string.format("Player %s hit 3 pylons. DNF!", player.Name))
 			end
 			break
 		end
@@ -394,7 +396,7 @@ function Airrace:CheckGateAltitudeForPlayer(player)
 		result = true
 	else
 		result = false
-		logMessage(string.format("FLYING TOO HIGH/LOW !!! Player altitude = %d meters", playerAgl))
+		logMessage(string.format("FLYING TOO HIGH/LOW !!! Player %s altitude = %d meters", player.Name, playerAgl))
 	end
 	return result
 end
@@ -410,10 +412,10 @@ function Airrace:CheckGateSpeedForPlayer(player)
 	-- logMessage(string.format("sped %d km/h", speed * 3.6))
 	if speed * 3.6 <= self.StartSpeedLimit then
 		result = true
-		logMessage(string.format("Player start speed = %d km/h", speed * 3.6))
+		logMessage(string.format("Player %s start speed = %d km/h", player.Name, speed * 3.6))
 	else
 		result = false
-		logMessage(string.format("EXCEEDING START SPEED LIMIT of %d km/h !!! Player speed = %s km/h", self.StartSpeedLimit, speed * 3.6))
+		logMessage(string.format("EXCEEDING START SPEED LIMIT of %d km/h !!! Player %s speed = %s km/h", self.StartSpeedLimit, player.Name, speed * 3.6))
 	end
 	return result
 end
@@ -431,7 +433,7 @@ function Airrace:CheckGateRollForPlayer(player)
 		result = true
 	else
 		result = false
-		logMessage(string.format("INCORRECT LEVEL FLYING !!! Player roll = %d degrees", roll))
+		logMessage(string.format("INCORRECT LEVEL FLYING !!! Player %s roll = %d degrees", player.Name, roll))
 	end
 	return result
 end
@@ -496,8 +498,10 @@ function Airrace:UpdatePlayerStatus(player)
 					self.FastestPlayer = player.Name
 					player.StatusText = string.format("%s - Fastest time!", player.StatusText)
 					self.FastestIntermediates = player.IntermediateTimes
+					env.info(string.format("Player %s achieved new time record: %s", player.Name, formatTime(self.FastestTime)))
 				else
 					player.StatusText = string.format("%s (+%s)", player.StatusText, formatTime(player.TotalTime - self.FastestTime))
+					env.info(string.format("Player %s +%s seconds behind best time", player.Name, formatTime(player.TotalTime - self.FastestTime)))
 				end
 			else
 -- Player is passing intermediate gate, set intermediate time
@@ -505,6 +509,7 @@ function Airrace:UpdatePlayerStatus(player)
 				local intermediate = player:GetIntermediateTime()
 				trigger.action.outSound('pik.ogg')
 				player.StatusText = string.format("Intermediate: %s", formatTime(intermediate))
+				env.info(string.format("Player %s reached gate %d", player.Name, gateNumber))
 				for i = 1 , #self.HorizontalGates do
 					if self.HorizontalGates[i] == gateNumber then
 						local gateRollOk = self:CheckGateRollForPlayer(player)
@@ -554,6 +559,8 @@ function Airrace:UpdatePlayerStatus(player)
 					player.CurrentGateNumber = gateNumber
 				else
 					-- Player is going the wrong way
+					env.info(string.format("Player %s missed gate %d and is going the wrong way", player.Name, player.CurrentGateNumber + 1))
+					env.info(string.format("gateNumber: %s, player.currentGateNumber: %s", gateNumber, player.CurrentGateNumber))
 					-- player.StatusText = string.format("Wrong way! Last known gate: %d", player.CurrentGateNumber)
 				end
 			end
