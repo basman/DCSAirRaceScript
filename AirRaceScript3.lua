@@ -443,7 +443,7 @@ end
 --
 function Airrace:UpdatePlayerStatus(player)
 	local gateNumber = self:GetGateNumberForPlayer(player)
-	if gateNumber > 0 and ( gateNumber ~= player.CurrentGateNumber or gateNumber == 1 ) then
+	if gateNumber > 0 and ( gateNumber ~= player.CurrentGateNumber or (gateNumber == 1 and player.Started == false)) then
 		if gateNumber == player.CurrentGateNumber + 1 or gateNumber == 1 then
 			if gateNumber == 1 then
 				local gateAltitudeOk = self:CheckGateAltitudeForPlayer(player)
