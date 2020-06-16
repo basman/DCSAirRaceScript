@@ -20,3 +20,7 @@ All you need to do is:
    block at the start of the script.
 6. Add a dummy trigger that plays all sound files. This makes sure, they are added to the
    mission file.
+
+Source: https://forums.eagle.ru/showthread.php?t=120234
+
+Example mission: see 04_celebrate.miz (requires Persian Gulf map)
