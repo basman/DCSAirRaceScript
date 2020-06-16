@@ -324,7 +324,7 @@ function Airrace:GetGateNumberForPlayer(player)
 	local playerUnitTable = mist.makeUnitTable( { player.UnitName } )
 	for gateIndex, gateName in ipairs(self.Course.Gates) do
 		local playersInsideZone = mist.getUnitsInZones(playerUnitTable, { gateName })
-		if #playersInsideZone > 0 and gateIndex == player.CurrentGateNumber + 1 then
+		if #playersInsideZone > 0 then
 			result = gateIndex
 			break
 		end
