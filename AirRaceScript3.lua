@@ -57,7 +57,8 @@ Player = {
 	PylonFlag = false,
 	Started = false,
 	Finished = false,
-	StatusText = ''
+	StatusText = '',
+	Warnings = {}
 }
 
 -----------------------------------------------------------------------------------------
@@ -89,7 +90,8 @@ function Player:New(playerUnit)
 		PylonFlag = false,
 		Started = false,
 		Finished = false,
-		StatusText = 'New entry'
+		StatusText = 'New entry',
+		Warnings = {}
 	}
 	setmetatable(obj, { __index = Player })
 
@@ -343,7 +345,7 @@ function Airrace:CheckPylonHitForPlayer(player)
 		if #playersInsideZone > 0 and player.PylonFlag == false then
 			local gateAltitudeOk = self:CheckPylonAltitudeForPlayer(player)
 			if  gateAltitudeOk == true then
-				logMessage(string.format("PYLON HIT!!! pylon %d ", pylonIndex))
+				warnPlayer(string.format("PYLON HIT!!! pylon %d ", pylonIndex), player)
 				trigger.action.outSound('penalty.ogg')
 				player.Penalty = player.Penalty + 3
 				player.HitPylon = player.HitPylon + 1
@@ -396,7 +398,7 @@ function Airrace:CheckGateAltitudeForPlayer(player)
 		result = true
 	else
 		result = false
-		logMessage(string.format("FLYING TOO HIGH/LOW !!! Player %s altitude = %d meters", player.Name, playerAgl))
+		warnPlayer(string.format("FLYING TOO HIGH !!! altitude = %d meters", playerAgl), player)
 	end
 	return result
 end
@@ -412,10 +414,10 @@ function Airrace:CheckGateSpeedForPlayer(player)
 	-- logMessage(string.format("sped %d km/h", speed * 3.6))
 	if speed * 3.6 <= self.StartSpeedLimit then
 		result = true
-		logMessage(string.format("Player %s start speed = %d km/h", player.Name, speed * 3.6))
+		--warnPlayer(string.format("start speed = %d km/h", speed * 3.6), player)
 	else
 		result = false
-		logMessage(string.format("EXCEEDING START SPEED LIMIT of %d km/h !!! Player %s speed = %s km/h", self.StartSpeedLimit, player.Name, speed * 3.6))
+		warnPlayer(string.format("EXCEEDING START SPEED LIMIT of %d km/h !!! speed = %s km/h", self.StartSpeedLimit, speed * 3.6), player)
 	end
 	return result
 end
@@ -433,7 +435,7 @@ function Airrace:CheckGateRollForPlayer(player)
 		result = true
 	else
 		result = false
-		logMessage(string.format("INCORRECT LEVEL FLYING !!! Player %s roll = %d degrees", player.Name, roll))
+		warnPlayer(string.format("INCORRECT LEVEL FLYING !!! roll = %d degrees", roll), player)
 	end
 	return result
 end
@@ -493,10 +495,10 @@ function Airrace:UpdatePlayerStatus(player)
 				-- Player has missed one or more gates
 				missedGates = gateNumber - (player.CurrentGateNumber + 1)
 				if missedGates == 1 then
-					player.StatusText = string.format("Missed gate %d", player.CurrentGateNumber + 1)
+					warnPlayer(string.format("Missed gate %d", player.CurrentGateNumber + 1), player)
 					env.info(string.format("Player %s missed gate %d", player.Name, player.CurrentGateNumber + 1))
 				else
-					player.StatusText = string.format("Missed gates %d to %d", player.CurrentGateNumber + 1, gateNumber - 1)
+					warnPlayer(string.format("Missed gates %d to %d", player.CurrentGateNumber + 1, gateNumber - 1), player)
 					env.info(string.format("Player %s missed gates %d to %d", player.Name, player.CurrentGateNumber + 1, gateNumber - 1))
 				end
 				player.Penalty = player.Penalty + (5 * missedGates)
@@ -599,6 +601,8 @@ function Airrace:ListPlayers()
 				end
 			end
 		end
+
+		local now = timer.getTime()
 		for playerIndex, player in ipairs(self.Players) do
 			text = string.format("%s\nPlayer: %s", text, player.Name)
 			playerNames[playerIndex] = player.UnitName
@@ -606,6 +610,12 @@ function Airrace:ListPlayers()
 				text = string.format("%s\tGate %d - %s", text, player.CurrentGateNumber, player.StatusText)
 			else
 				text = string.format("%s - %s", text, player.StatusText)
+			end
+
+			for messageIdx, message in ipairs(player.Warnings) do
+				if message[2] >= now then
+					text = text .. "\n  WARNING: " .. message[1]
+				end
 			end
 		end
 	end
@@ -654,7 +664,7 @@ end
 -- Write a message in dcs.log and show it on screen (for debugging purposes)
 -- Parameter message: the message to be written
 --
-function logMessage(message)
+function logMessage(message, player)
 	env.info(message)
 	local msg = {} 
 	msg.text = message
@@ -662,6 +672,16 @@ function logMessage(message)
 	msg.msgFor = {coa = {'all'}} 
 	mist.message.add(msg)
 --	trigger.action.outText(message, 10)
+end
+
+-----------------------------------------------------------------------------------------
+-- Add warning to player status output
+-- Parameter message: the message to be shown
+-- Parameter player:  the player for which the warning is intended
+function warnPlayer(message, player)
+	local displayTime = 15
+	local messageTimeout = timer.getTime() + displayTime
+	table.insert(player.Warnings, {message, messageTimeout})
 end
 
 -----------------------------------------------------------------------------------------
