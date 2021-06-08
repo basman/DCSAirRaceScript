@@ -702,7 +702,7 @@ function Init()
 			course:AddGate(idx)
 		end
 		race = Airrace:New(raceZones, racePylons, course, gateHeight, horizontalGates, startSpeedLimit)
-		mist.scheduleFunction(RaceTimer, { race }, timer.getTime(), 0.1)
+		mist.scheduleFunction(RaceTimer, { race }, timer.getTime(), 0.3)
 		mist.scheduleFunction(NewPlayerTimer, { race }, timer.getTime(), newPlayerCheckInterval)
 		mist.scheduleFunction(RemovePlayerTimer, { race }, timer.getTime(), removePlayerCheckInterval)
 	else
