@@ -274,8 +274,8 @@ function Airrace:RemoveExitedPlayers()
 
 		for playerIndex, player in ipairs(self.Players) do
 			playerExists = false
-			if player.Unit:getLife() > 1 then	-- Only check for alive units
-				for unitIndex, unit in ipairs(unitsInZone) do
+			for unitIndex, unit in ipairs(unitsInZone) do
+				if unit:getLife() > 1 then	-- Only check for alive units
 					local unitName = ''
 					if unit:getPlayerName() then
 						unitName = unit:getPlayerName()
@@ -289,7 +289,7 @@ function Airrace:RemoveExitedPlayers()
 				end
 			end
 			if not playerExists then
-				env.info(string.format("Player %s removed from player list", player.Name))
+				--env.info(string.format("Player %s removed from player list", player.Name))
 				table.remove(self.Players, playerIndex)
 			end
 		end
