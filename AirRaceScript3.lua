@@ -26,6 +26,8 @@
 --                                         RemovePlayerCheckInterval = <number of seconds between checks> [optional]--
 --                                         HorizontalGates = <list of gate numbers requiring level flight>[optional]--
 --                                         GateHeight = <global height of the gates in meters>            [optional]--
+--                                         BonusGateHeight = <global height of the bonus gates in meters> [optional]--
+--                                         BonusGates = <list of gate numbers requiring level flight>     [optional]--
 --                                         StartSpeedLimit = <first gate speed limit in km/h>             [optional]--
 --                                                                                                                  --
 --   2. Once          --> Time more(1) --> Do Script File                                                           --
@@ -47,6 +49,7 @@ Player = {
 	Name = '',
 	Unit = nil,
 	UnitName = '',
+	UnitID = 0,
 	CurrentGateNumber = 0,
 	StartTime = 0,
 	Penalty = 0,
@@ -80,6 +83,7 @@ function Player:New(playerUnit)
 		Name = playerName,
 		Unit = Unit.getByName(unitName),
 		UnitName = unitName,
+		UnitID = Unit.getID(Unit.getByName(unitName)),
 		CurrentGateNumber = 0,
 		StartTime = 0,
 		Penalty = 0,
@@ -256,7 +260,7 @@ function Airrace:CheckForNewPlayers()
 			if not playerExists then
 				env.info(string.format("Player %s added to player list", unit:getPlayerName() or unit:getName()))
 				table.insert(self.Players, Player:New(unit))
-				trigger.action.outSound('smoke on.ogg')
+				trigger.action.outSoundForUnit(player.UnitID, 'smoke on.ogg')
 			end
 		end
 	end
@@ -346,7 +350,7 @@ function Airrace:CheckPylonHitForPlayer(player)
 			local gateAltitudeOk = self:CheckPylonAltitudeForPlayer(player)
 			if  gateAltitudeOk == true then
 				warnPlayer(string.format("PYLON HIT!!! pylon %d ", pylonIndex), player)
-				trigger.action.outSound('penalty.ogg')
+				trigger.action.outSoundForUnit(player.UnitID, 'penalty.ogg')
 				player.Penalty = player.Penalty + 3
 				player.HitPylon = player.HitPylon + 1
 				player.PylonFlag = true
@@ -458,24 +462,24 @@ function Airrace:UpdatePlayerStatus(player)
 		local gateRollOk = self:CheckGateRollForPlayer(player)
 -- Player is passing gate 1, start timer
 		-- player.Started = false -- Passing gate 1 always resets the timer
-		trigger.action.outSound('pik.ogg')
+		trigger.action.outSoundForUnit(player.UnitID, 'pik.ogg')
 		player:StartTimer()
 		player.StatusText = "Started"
 		player.CurrentGateNumber = gateNumber
 		player.PylonFlag = false
 		if gateSpeedOk == false then
-			trigger.action.outSound('penalty.ogg')
+			trigger.action.outSoundForUnit(player.UnitID, 'penalty.ogg')
 			player:StopTimer()
 			player.StatusText = string.format("EXCEEDING START SPEED LIMIT !!! DNF!!!")
 			player.DNF = true
 		end
 		if gateRollOk == false then
-			trigger.action.outSound('penalty.ogg')
+			trigger.action.outSoundForUnit(player.UnitID, 'penalty.ogg')
 			player.Penalty = player.Penalty + 2
 			-- logMessage(string.format("PENALTY: + 2 seconds "))
 		end
 		if gateAltitudeOk == false then
-			trigger.action.outSound('penalty.ogg')
+			trigger.action.outSoundForUnit(player.UnitID, 'penalty.ogg')
 			player.Penalty = player.Penalty + 2
 			-- logMessage(string.format("PENALTY: + 2 seconds "))
 		end
@@ -518,12 +522,12 @@ function Airrace:UpdatePlayerStatus(player)
 			local gateRollOk = self:CheckGateRollForPlayer(player)
 			player.PylonFlag = false
 			if gateRollOk == false then
-				trigger.action.outSound('penalty.ogg')
+				trigger.action.outSoundForUnit(player.UnitID, 'penalty.ogg')
 				player.Penalty = player.Penalty + 2
 				-- logMessage(string.format("PENALTY: + 2 seconds "))
 			end
 			if gateAltitudeOk == false then
-				trigger.action.outSound('penalty.ogg')
+				trigger.action.outSoundForUnit(player.UnitID, 'penalty.ogg')
 				player.Penalty = player.Penalty + 2
 				-- logMessage(string.format("PENALTY: + 2 seconds "))
 			end
@@ -531,7 +535,7 @@ function Airrace:UpdatePlayerStatus(player)
 			player:StopTimer()
 			player.StatusText = string.format("Finished. Race time:  %s. Penalty: %s second. Total time: %s ", formatTime(player.TotalTime), player.Penalty, formatTime(player.TotalTime + player.Penalty))
 			env.info(string.format("Player %s finished the course. Race time: %s. Penalty: %s. Total time: %s", player.Name, formatTime(player.TotalTime), player.Penalty, formatTime(player.TotalTime + player.Penalty)))
-			trigger.action.outSound('pik.ogg')
+			trigger.action.outSoundForUnit(player.UnitID, 'pik.ogg')
 			player.CurrentGateNumber = gateNumber
 			if self.FastestTime == 0 or self.FastestTime > player.TotalTime + player.Penalty then
 				self.FastestTime = player.TotalTime + player.Penalty
@@ -549,14 +553,14 @@ function Airrace:UpdatePlayerStatus(player)
 -- Player is passing intermediate gate, set intermediate time
 		local gateAltitudeOk = self:CheckGateAltitudeForPlayer(player)
 		local intermediate = player:GetIntermediateTime()
-		trigger.action.outSound('pik.ogg')
+		trigger.action.outSoundForUnit(player.UnitID, 'pik.ogg')
 		player.StatusText = string.format("Intermediate: %s", formatTime(intermediate))
 		env.info(string.format("Player %s reached gate %d", player.Name, gateNumber))
 		for i = 1 , #self.HorizontalGates do
 			if self.HorizontalGates[i] == gateNumber then
 				local gateRollOk = self:CheckGateRollForPlayer(player)
 				if gateRollOk == false then
-					trigger.action.outSound('penalty.ogg')
+					trigger.action.outSoundForUnit(player.UnitID, 'penalty.ogg')
 					player.Penalty = player.Penalty + 2
 					-- logMessage(string.format("PENALTY: + 2 seconds "))
 				end
@@ -565,7 +569,7 @@ function Airrace:UpdatePlayerStatus(player)
 		end
 		player.PylonFlag = false
 		if gateAltitudeOk == false then
-			trigger.action.outSound('penalty.ogg')
+			trigger.action.outSoundForUnit(player.UnitID, 'penalty.ogg')
 			player.Penalty = player.Penalty + 2
 			-- logMessage(string.format("PENALTY: + 2 seconds "))
 		end
