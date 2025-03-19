@@ -256,7 +256,7 @@ function Airrace:CheckForNewPlayers()
 			if not playerExists then
 				env.info(string.format("Player %s added to player list", unit:getPlayerName() or unit:getName()))
 				table.insert(self.Players, Player:New(unit))
-				trigger.action.outSound('smoke on.ogg')
+				trigger.action.outSoundForUnit(Unit.getID(unit), 'smoke on.ogg')
 			end
 		end
 	end
