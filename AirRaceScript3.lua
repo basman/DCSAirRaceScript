@@ -26,8 +26,6 @@
 --                                         RemovePlayerCheckInterval = <number of seconds between checks> [optional]--
 --                                         HorizontalGates = <list of gate numbers requiring level flight>[optional]--
 --                                         GateHeight = <global height of the gates in meters>            [optional]--
---                                         BonusGateHeight = <global height of the bonus gates in meters> [optional]--
---                                         BonusGates = <list of gate numbers requiring level flight>     [optional]--
 --                                         StartSpeedLimit = <first gate speed limit in km/h>             [optional]--
 --                                                                                                                  --
 --   2. Once          --> Time more(1) --> Do Script File                                                           --
