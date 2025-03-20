@@ -266,7 +266,7 @@ function Airrace:CheckForNewPlayers()
 			if not playerExists then
 				env.info(string.format("Player %s added to player list", unit:getPlayerName() or unit:getName()))
 				table.insert(self.Players, Player:New(unit))
-				trigger.action.outSoundForUnit(Unit.getID(unit), 'smoke on.ogg')
+				trigger.action.outSoundForUnit(player.UnitID, 'smoke on.ogg')
 			end
 		end
 	end
@@ -609,6 +609,15 @@ function Airrace:UpdatePlayerStatus(player)
 		end
 	end
 	player.PylonFlag = false
+	local bonusGateAltitudeOk = self:CheckBonusAltitudeForPlayer(player)
+	for i = 1, #self.BonusGates do
+		if self.BonusGates[i] == gateNumber then
+			if bonusGateAltitudeOk == true then
+				player.Bonus = player.Bonus + 5
+				warnPlayer(string.format("Low Alt Bonus -5 Sec - %s", player.Name), player)
+			end
+		end
+	end
 	if gateAltitudeOk == false then
 		trigger.action.outSoundForUnit(player.UnitID, 'penalty.ogg')
 		player.Penalty = player.Penalty + 2
